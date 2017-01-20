@@ -1,0 +1,6 @@
+vendor
+app/development.sqlite
+app/development.log
+dump.rdb
+composer.lock
+composer.phar

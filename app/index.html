@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>Upload your product</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="/meesho/assets/css/material.min.css">
+        <link rel="stylesheet" href="/meesho/assets/css/meesho.css">
+    </head>
+    <body>
+        <div id="app" class="mdl-layout mdl-js-layout mdl-color--grey-100">
+            <main class="mdl-layout__content">
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--6-col" id="productForm"></div>
+                    <div class="mdl-cell mdl-cell--6-col" id="products"></div>
+                </div>
+            </main>
+        </div>
+    </body>
+    <script src="/meesho/assets/js/material.min.js"></script>
+    <script src="/meesho/assets/js/underscore.min.js"></script>
+    <script src="/meesho/assets/js/zepto.min.js"></script>
+    <script src="/meesho/assets/js/backbone.min.js"></script>
+    <script src="/meesho/assets/js/meesho.js"></script>
+
+
+    <!-- underscore templates -->
+    <script type="text/template" id="productUploadForm">
+        <div class="mdl-card mdl-shadow--6dp">
+            <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                <h2 class="mdl-card__title-text">Please Fill Required Fields to upload product</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <form id="postForm">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" id="name" name="name" />
+                        <label class="mdl-textfield__label" for="username">Product Name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" id="price" name="price" />
+                        <label class="mdl-textfield__label" for="userpass">Product Price(INR)</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                        <input class="mdl-textfield__input" placeholder="Product image" type="text" id="uploadFile" readonly/>
+                        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                            <i class="material-icons">attach_file</i><input type="file" id="uploadBtn" name="image">
+                        </div>
+                    </div>
+                    <div id="p1" class="mdl-progress mdl-js-progress"></div>
+                </form>
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+                <button id="post" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Upload</button>
+            </div>
+        </div>
+    </script>
+
+</html>
