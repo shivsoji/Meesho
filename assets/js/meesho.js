@@ -14,7 +14,7 @@ Meesho.Router = Backbone.Router.extend({
 
     home: function(){
         var form = new Meesho.Views.Form();
-        var products = new Meesho.Views.Products();
+        window.products = new Meesho.Views.Products();
         $('#app #productForm').html(form.render().el);
     }
 });
@@ -81,27 +81,33 @@ Meesho.Views.Form = Backbone.View.extend({
     handlePost: function(event)
     {
         var form = $('#postForm'),
-            data = new FormData(form[0]),
+            data = new FormData(),
+            name = form.find('input[name=name]').val(),
+            price = form.find('input[name=price]').val(),
             view = this;
         data.append('uid', view.uid);
+        data.append('name', name);
+        data.append('price', price);
 
-        $.ajax({
-            url: '/meesho/api/post',
-            type: 'POST',
-            processData: false,
-            contentType: false,
-            data: data,
-            success: function(data, textStatus, jqXHR)
-            {
-                $('#postForm')[0].reset();
-                view.uid = Math.random().toString(36).substr(2, 9);
-                //Meesho.Views.Products.initialize();
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.log('ERRORS: ' + textStatus);
-            }
-        });
+        if (name && price) {
+            $.ajax({
+                url: '/meesho/api/post',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function(data, textStatus, jqXHR)
+                {
+                    $('#postForm')[0].reset();
+                    view.uid = Math.random().toString(36).substr(2, 9);
+                    products.collection.fetch();
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.log('ERRORS: ' + textStatus);
+                }
+            });
+        }
 
     },
 

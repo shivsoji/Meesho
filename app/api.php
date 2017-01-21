@@ -61,7 +61,7 @@ $app->post('/meesho/api/upload', function (Request $request) use ($app,$redis) {
         $redis->set($uid, $base64);
         $image_256 = Image::make($name)->resize(256, 256)->save('/tmp/'.$uid.'_256.'.$ext);
         $image_512 = Image::make($name)->resize(512, 512)->save('/tmp/'.$uid.'_512.'.$ext);
-        process($uid, $file, $app, $redis);
+        process($uid, $app, $redis);
         return new JsonResponse(array('status'=> true));
     } else {
         return new JsonResponse(array('status'=> false));
@@ -73,14 +73,13 @@ $app->post('/meesho/api/post', function(Request $request) use ($app,$redis) {
     $name = $request->get('name');
     $price = $request->get('price');
     $uid = $request->get('uid');
-    $file = $request->files->get('image');
-    if ($name !== null && $price !== null && $uid !== null && $file !== null) {
+    if ($name !== null && $price !== null && $uid !== null) {
         $app['db']->insert('products', array(
             'uid' => $uid,
             'name' => $name,
             'price' => $price
         ));
-        process($uid, $file, $app, $redis);
+        process($uid, $app, $redis);
         return new JsonResponse(array('status'=> true));
     } else {
         return new JsonResponse(array('status'=> false));
@@ -99,8 +98,12 @@ $app->get('/meesho/api/products', function() use($app) {
     return new JsonResponse($products);
 });
 
-function process($uid, $file, $app, $redis) {
-    $ext = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+function process($uid, $app, $redis) {
+    $imgdata = base64_decode($redis->get($uid));
+    $f = finfo_open();
+    $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+    $split = explode( '/', $mime_type );
+    $ext = $split[1];
     $data = file_get_contents('/tmp/'.$uid.'_256.'.$ext);
     $m_256 = 'data:image/' . $ext . ';base64,' . base64_encode($data);
     $data = file_get_contents('/tmp/'.$uid.'_512.'.$ext);
@@ -119,6 +122,7 @@ function process($uid, $file, $app, $redis) {
                 'image_256' => $m_256,
                 'image_512' => $m_512
             ));
+            $redis->del($uid);
         }
     }
 }
