@@ -74,7 +74,7 @@ $app->post('/meesho/api/post', function(Request $request) use ($app,$redis) {
     $price = $request->get('price');
     $uid = $request->get('uid');
     $file = $request->files->get('image');
-    if ($name !== null && $price !== null && $uid !== null) {
+    if ($name !== null && $price !== null && $uid !== null && $file !== null) {
         $app['db']->insert('products', array(
             'uid' => $uid,
             'name' => $name,
@@ -94,7 +94,7 @@ $app->get('/meesho/api/product/{id}', function($id) use($app) {
 });
 
 $app->get('/meesho/api/products', function() use($app) {
-    $sql = "SELECT productImages.*, products.* FROM products LEFT JOIN productImages ON products.id=productImages.id;";
+    $sql = "SELECT productImages.*, products.* FROM products LEFT JOIN productImages ON products.id=productImages.id ORDER BY products.id DESC;";
     $products = $app['db']->fetchAll($sql);
     return new JsonResponse($products);
 });

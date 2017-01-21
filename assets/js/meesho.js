@@ -43,29 +43,38 @@ Meesho.Views.Form = Backbone.View.extend({
         var form = $('#postForm'),
             data = new FormData(form[0]),
             file = event.target.files[0],
-            reader = new FileReader(),
             view = this;
+        if (file) {
+            var imgTypes = ['jpg', 'jpeg', 'png'],
+                extension = file.name.split('.').pop().toLowerCase(),
+                isImg = imgTypes.indexOf(extension) > -1;
+        }
         data.append('uid', view.uid);
-        reader.onload = function(){
-            blob = reader.result;
-        };
-        reader.readAsDataURL(file);
 
-        $.ajax({
-            url: '/meesho/api/upload',
-            type: 'POST',
-            processData: false,
-            contentType: false,
-            data: data,
-            success: function(data, textStatus, jqXHR)
-            {
-                console.log(jqXHR);
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.log('ERRORS: ' + textStatus);
-            }
-        });
+        if (file && !isImg) {
+            alert('only jpg and png are allowed');
+            $('#postForm')[0].reset();
+            file = false;
+        }
+
+
+        if (file) {
+            $.ajax({
+                url: '/meesho/api/upload',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function(data, textStatus, jqXHR)
+                {
+                    console.log(jqXHR);
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.log('ERRORS: ' + textStatus);
+                }
+            });
+        }
 
     },
 
@@ -86,7 +95,7 @@ Meesho.Views.Form = Backbone.View.extend({
             {
                 $('#postForm')[0].reset();
                 view.uid = Math.random().toString(36).substr(2, 9);
-                //Meesho.Views.Products.collection.reset([{'name': 1}, {'name': 2}]);
+                //Meesho.Views.Products.initialize();
             },
             error: function(jqXHR, textStatus, errorThrown)
             {
@@ -143,6 +152,7 @@ Meesho.Views.Products = Backbone.View.extend({
     render: function()
     {
         var self = this;
+        this.$el.empty();
         this.$el.append('<ul></ul>');
         $ul = this.$el.find('ul');
         _(this.collection.models).each(function(item){
